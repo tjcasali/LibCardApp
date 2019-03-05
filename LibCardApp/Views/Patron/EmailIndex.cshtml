@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "EmailIndex";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/StyleSheet.css" rel="stylesheet" />
+
+<body id="homepage">
+    <div class="homepageContainer" id="homepageDiv">
+        <img src="/Images/HomePageImg.png" alt="LPLHomeImage" style="width:100%;">
+        <div class="centered">Email Export</div>
+        <p><a id="buttonOnImage" @Html.ActionLink("Export all emails into a CSV File.", "ExportCSV", "Patron", null, new { @class = "btn btn-primary" })></a></p>
+    </div>
+</body>

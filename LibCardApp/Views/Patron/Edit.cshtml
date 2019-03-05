@@ -1,0 +1,87 @@
+﻿@using LibCardApp.Models
+@model LibCardApp.ViewModels.PatronViewModel
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit Patron</h2>
+
+@using (Html.BeginForm("Save", "Patron"))
+{
+    <div>
+        @Html.LabelFor(m => m.Patron.DateSubmitted)
+        @Html.TextBoxFor(m => m.Patron.DateSubmitted, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.DateSubmitted)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Patron.Barcode)
+        @Html.TextBoxFor(m => m.Patron.Barcode, new { name = "BarcodeTextBox", @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.Barcode)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Patron.Name)
+        @Html.TextBoxFor(m => m.Patron.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.Name)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Patron.Address)
+        @Html.TextBoxFor(m => m.Patron.Address, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.Address)
+
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Patron.City)
+        @Html.TextBoxFor(m => m.Patron.City, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.Address)
+
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Patron.State)
+        @Html.TextBoxFor(m => m.Patron.State, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.State)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Patron.Zip)
+        @Html.TextBoxFor(m => m.Patron.Zip, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.Zip)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Patron.Email)
+        @Html.TextBoxFor(m => m.Patron.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.Email)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Patron.Phone)
+        @Html.TextBoxFor(m => m.Patron.Phone, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.Phone)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Patron.PType)
+        @Html.TextBoxFor(m => m.Patron.PType, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Patron.PType)
+    </div>
+    <br />
+    <br />
+    <p>
+        I am a resident of the Longwood Central School District. I agree to follow all library rules, to promptly pay all charged for overdue, lost and damaged materials,
+        and to give immediate notice of any change of address or loss of library card. I understand that I am repsonsible for all materials checked out on this card.
+    </p>
+    <div>
+        Please sign below: 
+
+        @Html.EditorFor(model => model.Patron.Signature)
+    </div>
+    @Html.HiddenFor(m => m.Patron.Id)
+    @Html.AntiForgeryToken()
+    <br />
+    <button type="submit" class="btn btn-primary">Save</button>
+    @*<input class="btn-default" type="button" value="Print PDF and Save" onclick="location.href='@Url.Action("PdfGenerator", "Patron")'" />*@
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+    <script src="~/Scripts/SignaturePadInit.js"></script>
+}

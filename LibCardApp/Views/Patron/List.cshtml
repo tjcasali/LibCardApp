@@ -1,0 +1,114 @@
+﻿@using LibCardApp.Models
+@model IEnumerable<LibCardApp.Models.Patron>
+@{
+    ViewBag.Title = "Patrons";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/StyleSheet.css" rel="stylesheet" />
+
+<br/>
+<p>@Html.ActionLink("Enter New Patron From Scratch", "New", "Patron", null, new { @class = "btn btn-primary" })</p>
+
+<input class="btn btn-primary" type="button" value="Enter New Patron With Barcode" id="btnSearch"
+       onclick="location.href='@Url.Action("BarcodeEntry", "Patron")?passedBarcode=' + document.getElementById('txtSearch').value; return false;" />
+<input class="text-primary" type="text" id="txtSearch" name="txtSearch" size="25" />
+
+<br />
+<br />
+
+<table id="patrons" class="table table-bordered table-striped table-hover" style="width: 100%">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>PType</th>
+        <th>Barcode</th>
+        <th>PDF</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            var table = $("#patrons").DataTable({
+                ajax: {
+                    url: "/api/patrons",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, patron) {
+                            return "<a href='/patron/edit/" + patron.id + "'>" + data + "</a>";
+                        }
+                    },
+                    {
+                        data: "address"
+                    },
+                    {
+                        data: "city"
+                    },
+                    {
+                        data: "state"
+                    },
+                    {
+                        data: "zip"
+                    },
+                    {
+                        data: "email"
+                    },
+                    {
+                        data: "phone"
+                    },
+                    {
+                        data: "pType"
+                    },
+                    {
+                        data: "barcode"
+                    },
+                    {
+                        data: "id",
+                        render: function (data, type, patron) {
+                            return "<a href='/patron/pdfgenerator/" + patron.id + "'" + data + ">PDF</a>";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class='btn-link js-delete' data-patron-id=" + data + ">Delete</button>";
+                        }
+                    }
+                ]
+            });
+
+            $("#patrons").on("click",
+                ".js-delete",
+                function () {
+                    var button = $(this);
+                    bootbox.confirm("Are you sure you want to delete this patron?",
+                        function (result) {
+                            if (result) {
+                                $.ajax({
+                                    url: "/api/patrons/" + button.attr("data-patron-id"),
+                                    method: "DELETE",
+                                    success: function () {
+                                        table.row(button.parents("tr")).remove().draw();
+                                    }
+                                });
+                            }
+                        });
+                });
+        });
+
+    </script>
+}

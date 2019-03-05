@@ -1,0 +1,75 @@
+﻿@model IEnumerable<LibCardApp.Models.Patron>
+@{
+    ViewBag.Title = "Patrons";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Patrons</h2>
+
+<link href="~/StyleSheet.css" rel="stylesheet" />
+
+<br/>
+
+<table id="patrons" class="table table-bordered table-striped table-hover" style="width: 100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>PType</th>
+            <th>Barcode</th>
+            <th>Date Submitted</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            var table = $("#patrons").DataTable({
+                ajax: {
+                    url: "/api/patrons",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                    },
+                    {
+                        data: "address"
+                    },
+                    {
+                        data: "city"
+                    },
+                    {
+                        data: "state"
+                    },
+                    {
+                        data: "zip"
+                    },
+                    {
+                        data: "email"
+                    },
+                    {
+                        data: "phone"
+                    },
+                    {
+                        data: "pType"
+                    },
+                    {
+                        data: "barcode"
+                    },
+                    {
+                        data: "dateSubmitted"
+                    }
+                ]
+            });
+        });
+
+    </script>
+}

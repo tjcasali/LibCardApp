@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "ReturnToLibrarian";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/StyleSheet.css" rel="stylesheet" />
+
+<body id="homepage">
+<div class="homepageContainer" id="homepageDiv">
+    <img src="/Images/HomePageImg.png" alt="LPLHomeImage" style="width:100%;">
+    <div class="thankYouText">Thank you for submitting your information! Please return the device to the clerk.</div>
+    <p><a id="buttonOnImage" @Html.ActionLink("Return to List", "Index", "Patron", null, new {@class = "btn btn-primary btn-lg"})></a></p>
+</div>
+</body>
+

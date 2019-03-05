@@ -1,0 +1,7 @@
+﻿@model byte[]
+
+<div class="signature-pad">
+    <canvas class="panel panel-default"></canvas>
+    <button type="button" class="btn btn-primary btn-sm btn-clear-canvas">Clear</button>
+    @Html.HiddenFor(model => model, ViewData["htmlAttributes"])
+</div>
