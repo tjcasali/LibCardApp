@@ -128,7 +128,7 @@ namespace LibCardApp.Controllers
             var patron = new Patron();
 
             string result = null;
-            string url = "http://www.search.livebrary.com:4500/PATRONAPI/20641001772034/dump";
+            string url = "http://www.search.livebrary.com:4500/PATRONAPI/" + passedBarcode + "/dump";
             WebResponse response = null;
             StreamReader reader = null;
 
