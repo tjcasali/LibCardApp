@@ -171,28 +171,42 @@ namespace LibCardApp.Controllers
 
                     try
                     {
+                        //example line: ADDRESS[pa]=100 Broadway Ave$Coram, NY 11727<BR>
+                        //startIndex finds the Address tag and moves 5 values to the right to pass it
                         startIndex = line.IndexOf("[pa]=") + 5;
+                        //endIndex finds the line break HTML tag at the end of the line. IndexOf takes the beginning of the given value
                         endIndex = line.IndexOf("<BR>");
 
+                        //fullAddress example line: 100 Broadway Ave$Coram, NY 11727
                         fullAddress = line.Substring(startIndex, endIndex - startIndex);
 
+                        //addressEndIndex finds the $ which is the value inbetween the Address and City, making it the last value of the Address
                         addressEndIndex = fullAddress.IndexOf("$");
+                        //cityEndIndex finds the comma after the city and moves to the left one value so it doesn't include the comma
                         cityEndIndex = fullAddress.IndexOf(",") - 1;
 
+                        //streesAddress starts at the beginning of the fullAddress line and cuts off before the $ (addressEndIndex)
                         streetAddress = fullAddress.Substring(0, addressEndIndex);
+                        //city has to move past the $ so we add 1 to the addressEndIndex, and the length of the string is the length between $ and ,
                         city = fullAddress.Substring(addressEndIndex + 1, cityEndIndex - addressEndIndex);
 
-
+                        //fullAddressNoWhiteSpace is used to get rid of inconsistencies in Sierra's API. Makes grabbing State and Zip easier because
+                        //    they're always 2 and 5 characters respectively
                         string fullAddressNoWhiteSpace = fullAddress.Replace(" ", String.Empty);
+                        //For zip and state we have to go from the end of the string and work backwards, so we put the endIndex at the length
                         int fullAddressEndIndex = fullAddressNoWhiteSpace.Length;
 
+                        //Since the Zip is the last value in the address, we start at the end and work 5 variables to the left.
                         zipStartIndex = fullAddressEndIndex - 5;
+                        //Since we have no white space anymore, we only have to work 2 more variables to the left to get the state.
                         stateStartIndex = zipStartIndex - 2;
 
+                        //We have to convert the string to an int, and we start from the zipStartIndex and grab the next 5 variables
                         zip = Int32.Parse(fullAddressNoWhiteSpace.Substring(zipStartIndex, 5));
+                        //State starts at the stateStartIndex and grabs the next 2 variables because there's no whitespace.
                         state = fullAddressNoWhiteSpace.Substring(stateStartIndex, 2);
 
-
+                        //Assign all of our new found variables to the local object
                         patron.Address = streetAddress;
                         patron.City = city;
                         patron.State = state;
@@ -200,6 +214,7 @@ namespace LibCardApp.Controllers
                     }
                     catch (Exception ex)
                     {
+                        //We end up here if the Sierra API was entered incorrectly (No $ or ,). The Clerk will have to enter the address data themselves.
                         patron.Address = "";
                         patron.City = "";
                         patron.State = "";
