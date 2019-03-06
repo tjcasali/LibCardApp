@@ -169,32 +169,42 @@ namespace LibCardApp.Controllers
                     string streetAddress, city, state;
                     int addressEndIndex, cityEndIndex, zipStartIndex, stateStartIndex;
 
-                    startIndex = line.IndexOf("[pa]=") + 5;
-                    endIndex = line.IndexOf("<BR>");
+                    try
+                    {
+                        startIndex = line.IndexOf("[pa]=") + 5;
+                        endIndex = line.IndexOf("<BR>");
 
-                    fullAddress = line.Substring(startIndex, endIndex - startIndex);
+                        fullAddress = line.Substring(startIndex, endIndex - startIndex);
 
-                    addressEndIndex = fullAddress.IndexOf("$");
-                    cityEndIndex = fullAddress.IndexOf(",") - 1;
+                        addressEndIndex = fullAddress.IndexOf("$");
+                        cityEndIndex = fullAddress.IndexOf(",") - 1;
 
-                    streetAddress = fullAddress.Substring(0, addressEndIndex);
-                    city = fullAddress.Substring(addressEndIndex + 1, cityEndIndex - addressEndIndex);
-
-
-                    string fullAddressNoWhiteSpace = fullAddress.Replace(" ", String.Empty);
-                    int fullAddressEndIndex = fullAddressNoWhiteSpace.Length;
-
-                    zipStartIndex = fullAddressEndIndex - 5;
-                    stateStartIndex = zipStartIndex - 2;
-
-                    zip = Int32.Parse(fullAddressNoWhiteSpace.Substring(zipStartIndex, 5));
-                    state = fullAddressNoWhiteSpace.Substring(stateStartIndex, 2);
+                        streetAddress = fullAddress.Substring(0, addressEndIndex);
+                        city = fullAddress.Substring(addressEndIndex + 1, cityEndIndex - addressEndIndex);
 
 
-                    patron.Address = streetAddress;
-                    patron.City = city;
-                    patron.State = state;
-                    patron.Zip = zip;
+                        string fullAddressNoWhiteSpace = fullAddress.Replace(" ", String.Empty);
+                        int fullAddressEndIndex = fullAddressNoWhiteSpace.Length;
+
+                        zipStartIndex = fullAddressEndIndex - 5;
+                        stateStartIndex = zipStartIndex - 2;
+
+                        zip = Int32.Parse(fullAddressNoWhiteSpace.Substring(zipStartIndex, 5));
+                        state = fullAddressNoWhiteSpace.Substring(stateStartIndex, 2);
+
+
+                        patron.Address = streetAddress;
+                        patron.City = city;
+                        patron.State = state;
+                        patron.Zip = zip;
+                    }
+                    catch (Exception ex)
+                    {
+                        patron.Address = "";
+                        patron.City = "";
+                        patron.State = "";
+                        patron.Zip = 0;
+                    }
                 }
 
                 //Phone
