@@ -598,6 +598,7 @@
     <Content Include="Views\Shared\EditorTemplates\SignaturePad.cshtml" />
     <Content Include="Views\Patron\EmailIndex.cshtml" />
     <Content Include="Views\Patron\ReturnToLibrarian.cshtml" />
+    <Content Include="Views\Patron\BarcodeNew.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

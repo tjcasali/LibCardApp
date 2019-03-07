@@ -275,7 +275,7 @@ namespace LibCardApp.Controllers
                 Patron = patron,
             };
 
-            return View("New", viewModel);
+            return View("BarcodeNew", viewModel);
         }
 
         #region PDF
