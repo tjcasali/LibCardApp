@@ -20,6 +20,7 @@
 <table id="patrons" class="table table-bordered table-striped table-hover" style="width: 100%">
     <thead>
     <tr>
+        <th>Date Submitted</th>
         <th>Name</th>
         <th>Address</th>
         <th>City</th>
@@ -46,6 +47,9 @@
                     dataSrc: ""
                 },
                 columns: [
+                    {
+                        data: "dateSubmitted",
+                    },
                     {
                         data: "name",
                         render: function (data, type, patron) {
