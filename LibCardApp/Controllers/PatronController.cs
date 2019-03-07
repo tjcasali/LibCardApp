@@ -494,6 +494,7 @@ namespace LibCardApp.Controllers
                 if (patron.Email != "No Email Provided")
                 {
                     emailExport.AddRow();
+                    emailExport["Name"] = patron.Name;
                     emailExport["Email"] = patron.Email;
                 }
             }
