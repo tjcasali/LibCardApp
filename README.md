@@ -18,3 +18,8 @@ Email Export:
 	- See if we can add date between fields to pull specific emails
 
 	- Fix if(patron.Email != "No Email Assigned")
+
+
+Save:
+
+	- Send an email to the patron on submission?

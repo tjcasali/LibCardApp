@@ -21,6 +21,11 @@ namespace LibCardApp
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
 
+            routes.MapRoute(
+                name: "EmailExportStartDate",
+                url: "Patron/ExportCSV/{date}",
+                defaults: new { controller = "Patron", action = "ExportCSV", date = UrlParameter.Optional });
+
         }
     }
 }

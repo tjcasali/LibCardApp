@@ -5,6 +5,7 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -485,34 +486,43 @@ namespace LibCardApp.Controllers
 
         /// ExportCSV()
         /// This function uses the CsvExport class to export all of the emails in the patron list
-        public ActionResult ExportCSV()
+        public ActionResult ExportCSV(string date)
         {
             var emailExport = new CsvExport();
 
             string firstName, lastName, firstNameAndMiddleInitial;
             int lastNameEndIndex, firstNameStartIndex, indexInbetweenFirstAndMiddle;
 
+            //date = "03/01/2019";
+
+            DateTime startDate = DateTime.Parse(date);
+
             foreach (var patron in _context.Patrons)
             {
-                //Barnaby Alvarez Jr~, Rose Ann A
-                lastNameEndIndex = patron.Name.IndexOf(",");
-                //Barnaby Alvarez Jr, ~Rose Ann A
-                firstNameStartIndex = lastNameEndIndex + 2;
-                //Rose Ann A
-                firstNameAndMiddleInitial = patron.Name.Substring(firstNameStartIndex);
-                //Rose Ann~ A
-                indexInbetweenFirstAndMiddle = firstNameAndMiddleInitial.LastIndexOf(" ");
-                //Rose Ann
-                firstName = firstNameAndMiddleInitial.Substring(0, indexInbetweenFirstAndMiddle);
-                //Barnaby Alvarez Jr~,
-                lastName = patron.Name.Substring(0, lastNameEndIndex);
+                DateTime patronDateSubmitted = DateTime.Parse(patron.DateSubmitted);
 
-                if (patron.Email != "No Email Provided" || patron.Email != null)
+                if (patronDateSubmitted.Ticks > startDate.Ticks)
                 {
-                    emailExport.AddRow();
-                    emailExport["First Name"] = firstName;
-                    emailExport["Last Name"] = lastName;
-                    emailExport["Email"] = patron.Email;
+                    //Barnaby Alvarez Jr~, Rose Ann A
+                    lastNameEndIndex = patron.Name.IndexOf(",");
+                    //Barnaby Alvarez Jr, ~Rose Ann A
+                    firstNameStartIndex = lastNameEndIndex + 2;
+                    //Rose Ann A
+                    firstNameAndMiddleInitial = patron.Name.Substring(firstNameStartIndex);
+                    //Rose Ann~ A
+                    indexInbetweenFirstAndMiddle = firstNameAndMiddleInitial.LastIndexOf(" ");
+                    //Rose Ann
+                    firstName = firstNameAndMiddleInitial.Substring(0, indexInbetweenFirstAndMiddle);
+                    //Barnaby Alvarez Jr~,
+                    lastName = patron.Name.Substring(0, lastNameEndIndex);
+
+                    if (patron.Email != "No Email Provided" || patron.Email != null)
+                    {
+                        emailExport.AddRow();
+                        emailExport["First Name"] = firstName;
+                        emailExport["Last Name"] = lastName;
+                        emailExport["Email"] = patron.Email;
+                    }
                 }
             }
             return File(emailExport.ExportToBytes(), "text/csv", "PatronEmails.csv");
