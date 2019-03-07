@@ -15,6 +15,6 @@ New Patron with Barcode:
 
 Email Export:
 
-	- See if we can split names so it can have 3 columns, First/Last/Email
-	
 	- See if we can add date between fields to pull specific emails
+
+	- Fix if(patron.Email != "No Email Assigned")
