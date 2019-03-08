@@ -493,14 +493,14 @@ namespace LibCardApp.Controllers
             string firstName, lastName, firstNameAndMiddleInitial;
             int lastNameEndIndex, firstNameStartIndex, indexInbetweenFirstAndMiddle;
 
-            //date = "03/01/2019";
-
             DateTime startDate = DateTime.Parse(date);
 
             foreach (var patron in _context.Patrons)
             {
+                //DateSubmitted is in the Database as a string so we have to parse to a Date
                 DateTime patronDateSubmitted = DateTime.Parse(patron.DateSubmitted);
 
+                //If DateSubmitted is after the Date submitted in the View
                 if (patronDateSubmitted.Ticks > startDate.Ticks)
                 {
                     //Barnaby Alvarez Jr~, Rose Ann A
@@ -516,7 +516,7 @@ namespace LibCardApp.Controllers
                     //Barnaby Alvarez Jr~,
                     lastName = patron.Name.Substring(0, lastNameEndIndex);
 
-                    if (patron.Email != "No Email Provided" || patron.Email != null)
+                    if (patron.Email != "No Email Provided")
                     {
                         emailExport.AddRow();
                         emailExport["First Name"] = firstName;
