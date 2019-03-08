@@ -8,7 +8,7 @@
 <body id="homepage">
 <div class="homepageContainer" id="homepageDiv">
     <img src="/Images/HomePageImg.png" alt="LPLHomeImage" style="width:100%;">
-    <div class="centered">Email Export<br/>Download all emails in the list after a date.<br/>Format: MM-DD-YYYY</div>
+    <div class="centered">Email Export:<br/>Download all emails in the list after a date.<br/>Format: MM-DD-YYYY</div>
     <div class="littlespace"></div>
     <input class="btn btn-primary" type="button" value="Enter Start Date" id="btnSearch"
            onclick="location.href='@Url.Action("ExportCSV", "Patron")?date=' + document.getElementById('txtSearch').value; return false;" />
