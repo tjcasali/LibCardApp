@@ -500,24 +500,34 @@ namespace LibCardApp.Controllers
                 //DateSubmitted is in the Database as a string so we have to parse to a Date
                 DateTime patronDateSubmitted = DateTime.Parse(patron.DateSubmitted);
 
-                //If DateSubmitted is after the Date submitted in the View
-                if (patronDateSubmitted.Ticks > startDate.Ticks)
-                {
-                    //Barnaby Alvarez Jr~, Rose Ann A
-                    lastNameEndIndex = patron.Name.IndexOf(",");
-                    //Barnaby Alvarez Jr, ~Rose Ann A
-                    firstNameStartIndex = lastNameEndIndex + 2;
-                    //Rose Ann A
-                    firstNameAndMiddleInitial = patron.Name.Substring(firstNameStartIndex);
-                    //Rose Ann~ A
-                    indexInbetweenFirstAndMiddle = firstNameAndMiddleInitial.LastIndexOf(" ");
-                    //Rose Ann
-                    firstName = firstNameAndMiddleInitial.Substring(0, indexInbetweenFirstAndMiddle);
-                    //Barnaby Alvarez Jr~,
-                    lastName = patron.Name.Substring(0, lastNameEndIndex);
 
-                    if (patron.Email != "No Email Provided")
+                if (patron.Email != "No Email Provided")
+                {
+
+                    //If DateSubmitted is after the Date submitted in the View
+                    if (patronDateSubmitted.Ticks > startDate.Ticks)
                     {
+                        //Barnaby Alvarez Jr~, Rose Ann A
+                        lastNameEndIndex = patron.Name.IndexOf(",");
+                        //Barnaby Alvarez Jr, ~Rose Ann A
+                        firstNameStartIndex = lastNameEndIndex + 2;
+
+                        firstNameAndMiddleInitial = patron.Name.Substring(firstNameStartIndex);
+
+                        //If there is a Middle Initial
+                        if (firstNameAndMiddleInitial.Contains(" "))
+                        {
+                            indexInbetweenFirstAndMiddle = firstNameAndMiddleInitial.LastIndexOf(" ");
+                            firstName = firstNameAndMiddleInitial.Substring(0, indexInbetweenFirstAndMiddle);
+                        }
+                        else
+                        {
+                            firstName = firstNameAndMiddleInitial;
+                        }
+
+                        //Barnaby Alvarez Jr~,
+                        lastName = patron.Name.Substring(0, lastNameEndIndex);
+
                         emailExport.AddRow();
                         emailExport["First Name"] = firstName;
                         emailExport["Last Name"] = lastName;
