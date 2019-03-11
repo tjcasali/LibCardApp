@@ -20,6 +20,7 @@ using PdfSharp.Drawing;
 using PdfSharp.Drawing.Layout;
 using System.Text;
 using log4net.Plugin;
+using System.Net.Mail;
 
 namespace LibCardApp.Controllers
 {
@@ -96,6 +97,48 @@ namespace LibCardApp.Controllers
                     patronInDb.Barcode = patron.Barcode;
                     patronInDb.Signature = patron.Signature;
                     patronInDb.DateSubmitted = patron.DateSubmitted;
+            }
+
+            _context.SaveChanges();
+
+            return View("ReturnToLibrarian");
+        }
+
+        /// Save(Patron patron)
+        /// Takes the patron that's currently in the View Model and saves it to the _context.
+        /// Returns the ReturnToLibrarian view because the patrons will have the iPad and we don't want
+        /// them seeing other patron's information
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SaveWithEmail(Patron patron)
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new PatronViewModel
+                {
+                    Patron = patron
+                };
+
+                return View("New", viewModel);
+            }
+
+            if (patron.Id == 0)
+                _context.Patrons.Add(patron);
+            else
+            {
+                var patronInDb = _context.Patrons.Single(p => p.Id == patron.Id);
+                patronInDb.Id = patron.Id;
+                patronInDb.Name = patron.Name;
+                patronInDb.Address = patron.Address;
+                patronInDb.City = patron.City;
+                patronInDb.State = patron.State;
+                patronInDb.Zip = patron.Zip;
+                patronInDb.Email = patron.Email;
+                patronInDb.Phone = patron.Phone;
+                patronInDb.PType = patron.PType;
+                patronInDb.Barcode = patron.Barcode;
+                patronInDb.Signature = patron.Signature;
+                patronInDb.DateSubmitted = patron.DateSubmitted;
             }
 
             _context.SaveChanges();
@@ -271,6 +314,7 @@ namespace LibCardApp.Controllers
             if (patron.Phone == null)
                 patron.Phone = "No Phone Provided";
 
+
             var viewModel = new PatronViewModel
             {
                 Patron = patron,
@@ -306,16 +350,19 @@ namespace LibCardApp.Controllers
             XGraphics gfx = XGraphics.FromPdfPage(page);
             XTextFormatter tf = new XTextFormatter(gfx);
 
-            //Get the EZFontResolver.
-            EZFontResolver fontResolver = EZFontResolver.Get;
-            // Assign it to PDFsharp.
-            GlobalFontSettings.FontResolver = fontResolver;
 
-            fontResolver.AddFont("Arial", XFontStyle.Regular, Server.MapPath("~/fonts/ARIAL.TTF"), true, true);
-            fontResolver.AddFont("Arial Bold", XFontStyle.Bold, Server.MapPath("~/fonts/ARIALBD.TTF"), true, true);
-            fontResolver.AddFont("Garamond", XFontStyle.Regular, Server.MapPath("~/fonts/GARA.TTF"), true, true);
-            fontResolver.AddFont("Wingdings", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDING.TTF"), true, true);
-            fontResolver.AddFont("Wingdings 2", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDNG2.TTF"), true, true);
+            //Maybe put in a Try Catch so it works locally and published
+
+            ////Get the EZFontResolver.
+            //EZFontResolver fontResolver = EZFontResolver.Get;
+            //// Assign it to PDFsharp.
+            //GlobalFontSettings.FontResolver = fontResolver;
+
+            //fontResolver.AddFont("Arial", XFontStyle.Regular, Server.MapPath("~/fonts/ARIAL.TTF"), true, true);
+            //fontResolver.AddFont("Arial Bold", XFontStyle.Bold, Server.MapPath("~/fonts/ARIALBD.TTF"), true, true);
+            //fontResolver.AddFont("Garamond", XFontStyle.Regular, Server.MapPath("~/fonts/GARA.TTF"), true, true);
+            //fontResolver.AddFont("Wingdings", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDING.TTF"), true, true);
+            //fontResolver.AddFont("Wingdings 2", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDNG2.TTF"), true, true);
 
             XFont font8Arial = new XFont("Arial", 8);
             XFont font12ArialBold = new XFont("Arial Bold", 12, XFontStyle.Bold);
@@ -452,13 +499,14 @@ namespace LibCardApp.Controllers
 
             //Naming Convention: The Patrons Last Name, then the last 4 digits of their Barcode. Ex: Casali2034.pdf
             string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
-            string fileSavePath = Server.MapPath("~/");
+            string fileSavePath = Server.MapPath("~/PDFs/");
 
             document.Save(fileSavePath + filename);
 
+            SendEmail(patron.Id);
+
             //return File(fileSavePath + filename, filename);
             return File(fileSavePath + filename, "application/pdf");
-
         }
 
 
@@ -500,7 +548,6 @@ namespace LibCardApp.Controllers
                 //DateSubmitted is in the Database as a string so we have to parse to a Date
                 DateTime patronDateSubmitted = DateTime.Parse(patron.DateSubmitted);
 
-
                 if (patron.Email != "No Email Provided")
                 {
 
@@ -535,9 +582,45 @@ namespace LibCardApp.Controllers
                     }
                 }
             }
+
             return File(emailExport.ExportToBytes(), "text/csv", "PatronEmails.csv");
         }
         #endregion
+
+        public void SendEmail(int id)
+        {
+            var patron = _context.Patrons.SingleOrDefault(c => c.Id == id);
+
+            var fromAddress = new MailAddress("LPLLibraryCards@gmail.com", "LPLLibraryCards");
+            var toAddress = new MailAddress(patron.Email, "New Patron");
+            const string fromPassword = "L1bCardData!";
+            const string subject = "Welcome to the Longwood Public Library";
+            const string body = "Testing Testing 123";
+
+            string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
+            string fileSavePath = Server.MapPath("~/PDFs/");
+            Attachment attachment = new Attachment(fileSavePath + filename);
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body,
+                Attachments = {attachment}
+            })
+            {
+                smtp.Send(message);
+            }
+
+        }
     }
 
 }
