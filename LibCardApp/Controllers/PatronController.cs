@@ -21,6 +21,7 @@ using PdfSharp.Drawing.Layout;
 using System.Text;
 using log4net.Plugin;
 using System.Net.Mail;
+using PdfSharp.Charting;
 
 namespace LibCardApp.Controllers
 {
@@ -104,13 +105,9 @@ namespace LibCardApp.Controllers
             return View("ReturnToLibrarian");
         }
 
-        /// Save(Patron patron)
-        /// Takes the patron that's currently in the View Model and saves it to the _context.
-        /// Returns the ReturnToLibrarian view because the patrons will have the iPad and we don't want
-        /// them seeing other patron's information
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SaveWithEmail(Patron patron)
+        public ActionResult SaveWithoutReturnScreen(Patron patron)
         {
             if (!ModelState.IsValid)
             {
@@ -143,8 +140,9 @@ namespace LibCardApp.Controllers
 
             _context.SaveChanges();
 
-            return View("ReturnToLibrarian");
+            return View("List");
         }
+
 
         /// Edit(int id)
         /// This function calls the patron from the _context using the id and pulls the patron
@@ -353,16 +351,23 @@ namespace LibCardApp.Controllers
 
             //Maybe put in a Try Catch so it works locally and published
 
-            ////Get the EZFontResolver.
-            //EZFontResolver fontResolver = EZFontResolver.Get;
-            //// Assign it to PDFsharp.
-            //GlobalFontSettings.FontResolver = fontResolver;
+            //Get the EZFontResolver.
+            EZFontResolver fontResolver = EZFontResolver.Get;
+            // Assign it to PDFsharp.
+            GlobalFontSettings.FontResolver = fontResolver;
 
-            //fontResolver.AddFont("Arial", XFontStyle.Regular, Server.MapPath("~/fonts/ARIAL.TTF"), true, true);
-            //fontResolver.AddFont("Arial Bold", XFontStyle.Bold, Server.MapPath("~/fonts/ARIALBD.TTF"), true, true);
-            //fontResolver.AddFont("Garamond", XFontStyle.Regular, Server.MapPath("~/fonts/GARA.TTF"), true, true);
-            //fontResolver.AddFont("Wingdings", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDING.TTF"), true, true);
-            //fontResolver.AddFont("Wingdings 2", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDNG2.TTF"), true, true);
+            try
+            {
+                fontResolver.AddFont("Arial", XFontStyle.Regular, Server.MapPath("~/fonts/ARIAL.TTF"), true, true);
+                fontResolver.AddFont("Arial Bold", XFontStyle.Bold, Server.MapPath("~/fonts/ARIALBD.TTF"), true, true);
+                fontResolver.AddFont("Garamond", XFontStyle.Regular, Server.MapPath("~/fonts/GARA.TTF"), true, true);
+                fontResolver.AddFont("Wingdings", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDING.TTF"), true, true);
+                fontResolver.AddFont("Wingdings 2", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDNG2.TTF"), true, true);
+            }
+            catch
+            {
+
+            }
 
             XFont font8Arial = new XFont("Arial", 8);
             XFont font12ArialBold = new XFont("Arial Bold", 12, XFontStyle.Bold);
@@ -499,7 +504,8 @@ namespace LibCardApp.Controllers
 
             //Naming Convention: The Patrons Last Name, then the last 4 digits of their Barcode. Ex: Casali2034.pdf
             string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
-            string fileSavePath = Server.MapPath("~/PDFs/");
+            //string fileSavePath = Server.MapPath("~/PDFs/");
+            string fileSavePath = Server.MapPath("~/");
 
             document.Save(fileSavePath + filename);
 
@@ -595,10 +601,11 @@ namespace LibCardApp.Controllers
             var toAddress = new MailAddress(patron.Email, "New Patron");
             const string fromPassword = "L1bCardData!";
             const string subject = "Welcome to the Longwood Public Library";
-            const string body = "Testing Testing 123";
+            const string body = "Welcome to the Longwood Public Library! Please see the attached file to view your receipt for your Library Card.";
 
             string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
-            string fileSavePath = Server.MapPath("~/PDFs/");
+            //string fileSavePath = Server.MapPath("~/PDFs/");
+            string fileSavePath = Server.MapPath("~/");
             Attachment attachment = new Attachment(fileSavePath + filename);
 
             var smtp = new SmtpClient
@@ -610,6 +617,8 @@ namespace LibCardApp.Controllers
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
             };
+
+
             using (var message = new MailMessage(fromAddress, toAddress)
             {
                 Subject = subject,
@@ -619,8 +628,7 @@ namespace LibCardApp.Controllers
             {
                 smtp.Send(message);
             }
-
+            
         }
     }
-
 }
