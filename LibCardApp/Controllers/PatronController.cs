@@ -177,9 +177,9 @@ namespace LibCardApp.Controllers
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
-            NetworkCredential networkCredential = new NetworkCredential("TimC", "20Csd08!", "lpl.local");
-            request.Credentials = networkCredential;
-            //request.Credentials = System.Net.CredentialCache.DefaultCredentials;
+            //NetworkCredential networkCredential = new NetworkCredential("TimC", "20Csd08!", "lpl.local");
+            //request.Credentials = networkCredential;
+            request.Credentials = System.Net.CredentialCache.DefaultCredentials;
             response = request.GetResponse();
             reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             result = reader.ReadToEnd();
