@@ -20,7 +20,7 @@ namespace LibCardApp.Models
         [Required]
         public string State { get; set; }
         [Required]
-        public int Zip { get; set; }
+        public int? Zip { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
         [Required]

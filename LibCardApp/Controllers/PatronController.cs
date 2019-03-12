@@ -558,7 +558,7 @@ namespace LibCardApp.Controllers
                 {
 
                     //If DateSubmitted is after the Date submitted in the View
-                    if (patronDateSubmitted.Ticks > startDate.Ticks)
+                    if (patronDateSubmitted.Ticks >= startDate.Ticks)
                     {
                         //Barnaby Alvarez Jr~, Rose Ann A
                         lastNameEndIndex = patron.Name.IndexOf(",");
@@ -597,7 +597,7 @@ namespace LibCardApp.Controllers
         {
             var patron = _context.Patrons.SingleOrDefault(c => c.Id == id);
 
-            var fromAddress = new MailAddress("LPLLibraryCards@gmail.com", "LPLLibraryCards");
+            var fromAddress = new MailAddress("LPLLibraryCards@gmail.com", "Longwood Library");
             var toAddress = new MailAddress(patron.Email, "New Patron");
             const string fromPassword = "L1bCardData!";
             const string subject = "Welcome to the Longwood Public Library";
