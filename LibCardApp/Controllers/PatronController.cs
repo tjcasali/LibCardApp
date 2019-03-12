@@ -105,6 +105,53 @@ namespace LibCardApp.Controllers
             return View("ReturnToLibrarian");
         }
 
+
+        /// Save(Patron patron)
+        /// Takes the patron that's currently in the View Model and saves it to the _context.
+        /// Returns the ReturnToLibrarian view because the patrons will have the iPad and we don't want
+        /// them seeing other patron's information
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SaveBarcode(Patron patron)
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new PatronViewModel
+                {
+                    Patron = patron
+                };
+
+                return View("BarcodeNew", viewModel);
+            }
+
+            if (patron.Id == 0)
+                _context.Patrons.Add(patron);
+            else
+            {
+                var patronInDb = _context.Patrons.Single(p => p.Id == patron.Id);
+                patronInDb.Id = patron.Id;
+                patronInDb.Name = patron.Name;
+                patronInDb.Address = patron.Address;
+                patronInDb.City = patron.City;
+                patronInDb.State = patron.State;
+                patronInDb.Zip = patron.Zip;
+                patronInDb.Email = patron.Email;
+                patronInDb.Phone = patron.Phone;
+                patronInDb.PType = patron.PType;
+                patronInDb.Barcode = patron.Barcode;
+                patronInDb.Signature = patron.Signature;
+                patronInDb.DateSubmitted = patron.DateSubmitted;
+            }
+
+            _context.SaveChanges();
+
+            return View("ReturnToLibrarian");
+        }
+
+        /// SaveWithoutReturnScreen(Patron patron)
+        /// Takes the patron that's currently in the View Model and saves it to the _context.
+        /// This function is called when the user is editing a patron so the return view isnt
+        /// the ReturnToLibrarian, it just returns to Index
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SaveWithoutReturnScreen(Patron patron)

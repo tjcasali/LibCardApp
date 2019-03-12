@@ -7,7 +7,7 @@
 <h2>New Patron</h2>
 
 
-@using (Html.BeginForm("Save", "Patron"))
+@using (Html.BeginForm("SaveBarcode", "Patron"))
 {
     <div>
         @Html.LabelFor(m => m.Patron.DateSubmitted)
@@ -70,10 +70,9 @@
 
     <div>
         Please sign below:
-
         @Html.EditorFor(model => model.Patron.Signature)
+        @Html.ValidationMessageFor(m => m.Patron.Signature)
     </div>
-
     @Html.HiddenFor(m => m.Patron.Id)
     @Html.AntiForgeryToken()
 
