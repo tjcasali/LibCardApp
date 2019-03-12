@@ -254,12 +254,12 @@ namespace LibCardApp.Controllers
                         patron.State = state;
                         patron.Zip = zip;
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         //We end up here if the Sierra API was entered incorrectly (No $ or ,). The Clerk will have to enter the address data themselves.
-                        patron.Address = "";
-                        patron.City = "";
-                        patron.State = "";
+                        patron.Address = "Address entered incorrectly";
+                        patron.City = "Address entered incorrectly";
+                        patron.State = "Address entered incorrectly";
                         patron.Zip = 0;
                     }
                 }
