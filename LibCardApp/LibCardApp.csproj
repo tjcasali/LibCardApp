@@ -599,6 +599,7 @@
     <Content Include="Views\Patron\EmailIndex.cshtml" />
     <Content Include="Views\Patron\ReturnToLibrarian.cshtml" />
     <Content Include="Views\Patron\BarcodeNew.cshtml" />
+    <Content Include="Views\Patron\EmailConfirmation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

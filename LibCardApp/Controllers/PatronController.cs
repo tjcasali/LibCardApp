@@ -509,12 +509,200 @@ namespace LibCardApp.Controllers
 
             document.Save(fileSavePath + filename);
 
-            SendEmail(patron.Id);
-
             //return File(fileSavePath + filename, filename);
             return File(fileSavePath + filename, "application/pdf");
         }
 
+        public ActionResult PDFGeneratorEmail(int id)
+        {
+            var patron = _context.Patrons.SingleOrDefault(c => c.Id == id);
+
+            if (patron == null)
+                return HttpNotFound();
+
+            var viewModel = new PatronViewModel
+            {
+                Patron = patron,
+            };
+
+            #region PDF Document Declarations
+
+            string todaysDate = DateTime.Now.ToShortDateString();
+            string stringZip = patron.Zip.ToString();
+
+            PdfDocument document = new PdfDocument();
+            document.Info.Title = patron.Name;
+            PdfPage page = document.AddPage();
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XTextFormatter tf = new XTextFormatter(gfx);
+
+
+            //Maybe put in a Try Catch so it works locally and published
+
+            //Get the EZFontResolver.
+            EZFontResolver fontResolver = EZFontResolver.Get;
+            // Assign it to PDFsharp.
+            GlobalFontSettings.FontResolver = fontResolver;
+
+            try
+            {
+                fontResolver.AddFont("Arial", XFontStyle.Regular, Server.MapPath("~/fonts/ARIAL.TTF"), true, true);
+                fontResolver.AddFont("Arial Bold", XFontStyle.Bold, Server.MapPath("~/fonts/ARIALBD.TTF"), true, true);
+                fontResolver.AddFont("Garamond", XFontStyle.Regular, Server.MapPath("~/fonts/GARA.TTF"), true, true);
+                fontResolver.AddFont("Wingdings", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDING.TTF"), true, true);
+                fontResolver.AddFont("Wingdings 2", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDNG2.TTF"), true, true);
+            }
+            catch
+            {
+
+            }
+
+            XFont font8Arial = new XFont("Arial", 8);
+            XFont font12ArialBold = new XFont("Arial Bold", 12, XFontStyle.Bold);
+            XFont font12Garamond = new XFont("Garamond", 12);
+            XFont wingdings = new XFont("Wingdings", 12);
+            XFont wingdings2 = new XFont("Wingdings 2", 12);
+
+
+            XPen blackPen = new XPen(XColors.Black, 1.5);
+            XPen blackPenThin = new XPen(XColors.Black, 0.5);
+            XPen grayPenThin = new XPen(XColors.LightGray, 0.3);
+            #endregion
+
+            string logoFilepath = System.Web.HttpContext.Current.Server.MapPath("~/Images/LPLLogoPNG.png");
+            XImage lplLogo = XImage.FromFile(logoFilepath);
+            gfx.DrawImage(lplLogo, 15, 15, 120, 72);
+
+            tf.DrawString("LPL Library Card", font12ArialBold, XBrushes.Black, new XRect(25, 100, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(blackPen, 25, 115, page.Width - 25, 115);
+
+            #region General (Patron) Information
+            tf.DrawString("General Information", font12Garamond, XBrushes.Black, new XRect(25, 125, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(blackPenThin, 25, 140, page.Width - 50, 140);
+
+            tf.DrawString("Today's Date", font8Arial, XBrushes.Black, new XRect(50, 145, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(todaysDate, font8Arial, XBrushes.Black, new XRect((page.Width / 2 + 2), 145, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 155, page.Width / 2, 155);
+
+            tf.DrawString("Name", font8Arial, XBrushes.Black, new XRect(50, 155, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(patron.Name, font8Arial, XBrushes.Black, new XRect((page.Width / 2 + 2), 155, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 165, page.Width / 2, 165);
+
+            tf.DrawString("Street Address", font8Arial, XBrushes.Black, new XRect(50, 165, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(patron.Address, font8Arial, XBrushes.Black, new XRect((page.Width / 2 + 2), 165, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 175, page.Width / 2, 175);
+
+            tf.DrawString("City", font8Arial, XBrushes.Black, new XRect(50, 175, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(patron.City, font8Arial, XBrushes.Black, new XRect((page.Width / 2 + 2), 175, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 185, page.Width / 2, 185);
+
+            tf.DrawString("State", font8Arial, XBrushes.Black, new XRect(50, 185, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(patron.State, font8Arial, XBrushes.Black, new XRect((page.Width / 2 + 2), 185, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 195, page.Width / 2, 195);
+
+            tf.DrawString("Zip Code", font8Arial, XBrushes.Black, new XRect(50, 195, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(stringZip, font8Arial, XBrushes.Black, new XRect((page.Width / 2 + 2), 195, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 205, page.Width / 2, 205);
+
+            tf.DrawString("Email Address", font8Arial, XBrushes.Black, new XRect(50, 205, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(patron.Email, font8Arial, XBrushes.Black, new XRect((page.Width / 2 + 2), 205, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 215, page.Width / 2, 215);
+
+            tf.DrawString("Phone", font8Arial, XBrushes.Black, new XRect(50, 215, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(patron.Phone, font8Arial, XBrushes.Black, new XRect((page.Width / 2 + 2), 215, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 225, page.Width / 2, 225);
+
+            tf.DrawString("Your e-mail address will only be used by the library for overdue and other notices", font8Arial, XBrushes.Black, new XRect(50, 230, page.Width, page.Height), XStringFormats.TopLeft);
+            #endregion
+
+            #region Age Range
+            gfx.DrawString("Age", font12Garamond, XBrushes.Black, new XRect(25, 250, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(blackPenThin, 25, 265, page.Width - 50, 265);
+
+            gfx.DrawString("Adult", font8Arial, XBrushes.Black, new XRect(50, 270, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 280, page.Width / 2, 280);
+
+            gfx.DrawString("Young Adult (Ages 12 - 16)", font8Arial, XBrushes.Black, new XRect(50, 280, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 290, page.Width / 2, 290);
+
+            gfx.DrawString("Child (Birth - Age 11)", font8Arial, XBrushes.Black, new XRect(50, 290, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 290, page.Width / 2, 290);
+
+            switch (patron.PType)
+            {
+                case "p73":
+                case "p75":
+                case "p222":
+                    gfx.DrawString("R", wingdings2, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
+                    break;
+
+                case "p62":
+                case "p65":
+                    gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString("R", wingdings2, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
+                    break;
+                case "p74":
+                case "p76":
+                    gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString("R", wingdings2, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
+                    break;
+                default:
+                    gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
+                    break;
+
+            }
+
+            const string signatureText =
+                "I am a resident of the Longwood Central School District.I agree to follow all library rules, to promptly \n" +
+                "pay all charges for overdue, lost and damaged materials, and to give immediate notice of any change of \n" +
+                "address or loss of library card. I understand that I am responsible for all materials checked out on this card.";
+
+
+            byte[] photoBack = patron.Signature;
+            using (MemoryStream ms = new MemoryStream(photoBack))
+            {
+                var image = RenderImage(patron.Id);
+                XImage signatureImage = XImage.FromStream(ms);
+                gfx.DrawImage(signatureImage, page.Width / 2 + 5, 365, 50, 25);
+            }
+
+            tf.DrawString(signatureText, font8Arial, XBrushes.Black, new XRect(50, 330, page.Width, page.Height), XStringFormats.TopLeft);
+
+            tf.DrawString("Signature", font8Arial, XBrushes.Black, new XRect(50, 375, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 385, page.Width / 2, 385);
+
+            tf.DrawString("Date", font8Arial, XBrushes.Black, new XRect(50, 395, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(todaysDate, font8Arial, XBrushes.Black, new XRect((page.Width / 2 + 2), 395, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 405, page.Width / 2, 405);
+
+            tf.DrawString("Staff Use Only", font8Arial, XBrushes.Black, new XRect(50, 425, page.Width, page.Height), XStringFormats.TopLeft);
+
+            tf.DrawString("Barcode", font8Arial, XBrushes.Black, new XRect(50, 435, page.Width, page.Height), XStringFormats.TopLeft);
+            tf.DrawString(patron.Barcode, font8Arial, XBrushes.Black,
+                new XRect((page.Width / 2 + 2), 435, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawLine(grayPenThin, 50, 445, page.Width / 2, 445);
+
+            #endregion
+
+            //Naming Convention: The Patrons Last Name, then the last 4 digits of their Barcode. Ex: Casali2034.pdf
+            string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
+            //string fileSavePath = Server.MapPath("~/PDFs/");
+            string fileSavePath = Server.MapPath("~/");
+
+            document.Save(fileSavePath + filename);
+
+            if (patron.Email != "No Email Provided")
+                SendEmail(patron.Id);
+
+            //return File(fileSavePath + filename, filename);
+            return View("EmailConfirmation");
+        }
 
         /// Render Image(int id)
         /// This function is called in the PDF Generator Action. It's used to pull the signature
@@ -593,6 +781,10 @@ namespace LibCardApp.Controllers
         }
         #endregion
 
+
+        /// SendEmail(int id)
+        /// Takes the patron ID in the PDFGenerator ActionResult and send the user an email
+        /// with their receipt.
         public void SendEmail(int id)
         {
             var patron = _context.Patrons.SingleOrDefault(c => c.Id == id);

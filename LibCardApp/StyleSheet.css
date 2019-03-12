@@ -17,7 +17,18 @@
 
 #patrons {
     margin: 0;
-    width: 100%;
+    width: 100% !important;
+}
+
+.container-fluid{
+    width:95% !important;
+}
+
+.textBlock {
+    text-align: center;
+    font-family: "Century Gothic",sans-serif;
+    color: #0c7589;
+    font-size: 18px;
 }
 
 .homepageContainer {

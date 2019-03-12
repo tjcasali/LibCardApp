@@ -30,6 +30,8 @@
         <th>Phone</th>
         <th>PType</th>
         <th>Barcode</th>
+        <th>View
+            PDF</th>
         <th>Email
             PDF</th>
         <th>Delete</th>
@@ -85,6 +87,12 @@
                         data: "id",
                         render: function (data, type, patron) {
                             return "<a href='/patron/pdfgenerator/" + patron.id + "'" + data + ">PDF</a>";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data, type, patron) {
+                            return "<a href='/patron/pdfgeneratoremail/" + patron.id + "'" + data + ">Email</a>";
                         }
                     },
                     {
