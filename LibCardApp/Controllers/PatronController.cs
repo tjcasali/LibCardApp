@@ -77,8 +77,10 @@ namespace LibCardApp.Controllers
                 {
                     Patron = patron
                 };
-
-                return View("New", viewModel);
+                if (patron.Barcode != null)
+                    return View("BarcodeNew", viewModel);
+                else
+                    return View("New", viewModel);
             }
 
             if (patron.Id == 0)
@@ -110,43 +112,45 @@ namespace LibCardApp.Controllers
         /// Takes the patron that's currently in the View Model and saves it to the _context.
         /// Returns the ReturnToLibrarian view because the patrons will have the iPad and we don't want
         /// them seeing other patron's information
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult SaveBarcode(Patron patron)
-        {
-            if (!ModelState.IsValid)
-            {
-                var viewModel = new PatronViewModel
-                {
-                    Patron = patron
-                };
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult SaveBarcode(Patron patron)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        var viewModel = new PatronViewModel
+        //        {
+        //            Patron = patron
+        //        };
+        //        if (patron.Barcode != null)
+        //            return View("BarcodeNew", viewModel);
+        //        else
+        //            return View("New", viewModel);
+        //    }
 
-                return View("BarcodeNew", viewModel);
-            }
+        //    if (patron.Id == 0)
+        //        _context.Patrons.Add(patron);
+        //    else
+        //    {
+        //        var patronInDb = _context.Patrons.Single(p => p.Id == patron.Id);
+        //        patronInDb.Id = patron.Id;
+        //        patronInDb.Name = patron.Name;
+        //        patronInDb.Address = patron.Address;
+        //        patronInDb.City = patron.City;
+        //        patronInDb.State = patron.State;
+        //        patronInDb.Zip = patron.Zip;
+        //        patronInDb.Email = patron.Email;
+        //        patronInDb.Phone = patron.Phone;
+        //        patronInDb.PType = patron.PType;
+        //        patronInDb.Barcode = patron.Barcode;
+        //        patronInDb.Signature = patron.Signature;
+        //        patronInDb.DateSubmitted = patron.DateSubmitted;
+        //    }
 
-            if (patron.Id == 0)
-                _context.Patrons.Add(patron);
-            else
-            {
-                var patronInDb = _context.Patrons.Single(p => p.Id == patron.Id);
-                patronInDb.Id = patron.Id;
-                patronInDb.Name = patron.Name;
-                patronInDb.Address = patron.Address;
-                patronInDb.City = patron.City;
-                patronInDb.State = patron.State;
-                patronInDb.Zip = patron.Zip;
-                patronInDb.Email = patron.Email;
-                patronInDb.Phone = patron.Phone;
-                patronInDb.PType = patron.PType;
-                patronInDb.Barcode = patron.Barcode;
-                patronInDb.Signature = patron.Signature;
-                patronInDb.DateSubmitted = patron.DateSubmitted;
-            }
+        //    _context.SaveChanges();
 
-            _context.SaveChanges();
-
-            return View("ReturnToLibrarian");
-        }
+        //    return View("ReturnToLibrarian");
+        //}
 
         /// SaveWithoutReturnScreen(Patron patron)
         /// Takes the patron that's currently in the View Model and saves it to the _context.
