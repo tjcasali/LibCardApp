@@ -107,51 +107,6 @@ namespace LibCardApp.Controllers
             return View("ReturnToLibrarian");
         }
 
-
-        /// Save(Patron patron)
-        /// Takes the patron that's currently in the View Model and saves it to the _context.
-        /// Returns the ReturnToLibrarian view because the patrons will have the iPad and we don't want
-        /// them seeing other patron's information
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult SaveBarcode(Patron patron)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        var viewModel = new PatronViewModel
-        //        {
-        //            Patron = patron
-        //        };
-        //        if (patron.Barcode != null)
-        //            return View("BarcodeNew", viewModel);
-        //        else
-        //            return View("New", viewModel);
-        //    }
-
-        //    if (patron.Id == 0)
-        //        _context.Patrons.Add(patron);
-        //    else
-        //    {
-        //        var patronInDb = _context.Patrons.Single(p => p.Id == patron.Id);
-        //        patronInDb.Id = patron.Id;
-        //        patronInDb.Name = patron.Name;
-        //        patronInDb.Address = patron.Address;
-        //        patronInDb.City = patron.City;
-        //        patronInDb.State = patron.State;
-        //        patronInDb.Zip = patron.Zip;
-        //        patronInDb.Email = patron.Email;
-        //        patronInDb.Phone = patron.Phone;
-        //        patronInDb.PType = patron.PType;
-        //        patronInDb.Barcode = patron.Barcode;
-        //        patronInDb.Signature = patron.Signature;
-        //        patronInDb.DateSubmitted = patron.DateSubmitted;
-        //    }
-
-        //    _context.SaveChanges();
-
-        //    return View("ReturnToLibrarian");
-        //}
-
         /// SaveWithoutReturnScreen(Patron patron)
         /// Takes the patron that's currently in the View Model and saves it to the _context.
         /// This function is called when the user is editing a patron so the return view isnt
@@ -166,7 +121,6 @@ namespace LibCardApp.Controllers
                 {
                     Patron = patron
                 };
-
                 return View("New", viewModel);
             }
 
@@ -373,7 +327,7 @@ namespace LibCardApp.Controllers
         }
 
         #region PDF
-        ///ActionResult: PdfGenerator
+        /// PdfGenerator
         ///Use: Takes the id from the List View and pull the respective Patron information and print it onto the pdf template
         ///After it's done it returns the pdf that it's created so it's available to print.
         public ActionResult PdfGenerator(int id)
@@ -507,12 +461,14 @@ namespace LibCardApp.Controllers
                     gfx.DrawString("R", wingdings2, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
                     break;
+
                 case "p74":
                 case "p76":
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("R", wingdings2, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
                     break;
+
                 default:
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
@@ -564,6 +520,9 @@ namespace LibCardApp.Controllers
             return File(fileSavePath + filename, "application/pdf");
         }
 
+        /// PdfGeneratorEmail(int id)
+        ///Use: Takes the id from the List View and pull the respective Patron information and print it onto the pdf template
+        ///After it's done it uses the SendEmail function to email the patron their PDF receipt.
         public ActionResult PDFGeneratorEmail(int id)
         {
             var patron = _context.Patrons.SingleOrDefault(c => c.Id == id);
@@ -766,6 +725,49 @@ namespace LibCardApp.Controllers
 
             return File(photoBack, "image/png");
         }
+
+        /// SendEmail(int id)
+        /// Takes the patron ID in the PDFGenerator ActionResult and send the user an email
+        /// with their receipt.
+        public void SendEmail(int id)
+        {
+            var patron = _context.Patrons.SingleOrDefault(c => c.Id == id);
+
+            //Send emails from the Gmail account I created
+            var fromAddress = new MailAddress("LPLLibraryCards@gmail.com", "Longwood Library");
+            //Takes the email that was passed from PDFGeneratorEmail 
+            var toAddress = new MailAddress(patron.Email, "New Patron");
+            const string fromPassword = "L1bCardData!";
+            const string subject = "Welcome to the Longwood Public Library";
+            const string body = "Welcome to the Longwood Public Library! Please see the attached file to view your receipt for your Library Card.";
+
+            string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
+            //string fileSavePath = Server.MapPath("~/PDFs/");
+            string fileSavePath = Server.MapPath("~/");
+            Attachment attachment = new Attachment(fileSavePath + filename);
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+
+
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body,
+                Attachments = { attachment }
+            })
+            {
+                smtp.Send(message);
+            }
+
+        }
         #endregion
 
         #region EmailExport
@@ -832,46 +834,5 @@ namespace LibCardApp.Controllers
         }
         #endregion
 
-
-        /// SendEmail(int id)
-        /// Takes the patron ID in the PDFGenerator ActionResult and send the user an email
-        /// with their receipt.
-        public void SendEmail(int id)
-        {
-            var patron = _context.Patrons.SingleOrDefault(c => c.Id == id);
-
-            var fromAddress = new MailAddress("LPLLibraryCards@gmail.com", "Longwood Library");
-            var toAddress = new MailAddress(patron.Email, "New Patron");
-            const string fromPassword = "L1bCardData!";
-            const string subject = "Welcome to the Longwood Public Library";
-            const string body = "Welcome to the Longwood Public Library! Please see the attached file to view your receipt for your Library Card.";
-
-            string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
-            //string fileSavePath = Server.MapPath("~/PDFs/");
-            string fileSavePath = Server.MapPath("~/");
-            Attachment attachment = new Attachment(fileSavePath + filename);
-
-            var smtp = new SmtpClient
-            {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
-
-
-            using (var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body,
-                Attachments = {attachment}
-            })
-            {
-                smtp.Send(message);
-            }
-            
-        }
     }
 }
