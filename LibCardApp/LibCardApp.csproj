@@ -339,7 +339,6 @@
     <Compile Include="Models\RoleName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\BarcodeViewModel.cs" />
     <Compile Include="ViewModels\PatronViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
