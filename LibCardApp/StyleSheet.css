@@ -66,6 +66,22 @@
 }
 
 
+.editor-label {
+    display: block;
+    float: left;
+    padding: 0;
+    width: 150px;
+    margin: 1em 1em 0 0;
+}
+
+.editor-field {
+    width: auto;
+    margin: 0.5em 0 0 0;
+    overflow: auto;
+    min-height: 2em;
+    transform: translate(-2.5%, 10%);
+}
+
 .navbar {
     background-color: #0c7589;
     border-color: #425766;
