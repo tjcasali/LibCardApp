@@ -11,52 +11,52 @@
 @using (Html.BeginForm("Save", "Patron"))
 {
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.DateSubmitted)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.DateSubmitted):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.DateSubmitted, new { @class = "form-control", @Value = @DateTime.Now.ToShortDateString() })</div>
         @Html.ValidationMessageFor(m => m.Patron.DateSubmitted)
     </div>
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.Barcode)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.Barcode):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.Barcode, new { name = "BarcodeTextBox", @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.Barcode)
     </div>
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.Name)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.Name):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.Name, new { @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.Name)
     </div>
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.Address)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.Address):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.Address, new { @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.Address)
     </div>
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.City)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.City):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.City, new { @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.City)
     </div>
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.State)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.State):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.State, new { @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.State)
     </div>
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.Zip)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.Zip):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.Zip, new { @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.Zip)
     </div>
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.Email)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.Email):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.Email, new { @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.Email)
     </div>
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.Phone)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.Phone):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.Phone, new { @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.Phone)
     </div>
     <div>
-        <div class="editor-label">@Html.LabelFor(m => m.Patron.PType)</div>
+        <div class="editor-label">@Html.LabelFor(m => m.Patron.PType):</div>
         <div class="editor-field">@Html.TextBoxFor(m => m.Patron.PType, new { @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.PType)
     </div>
