@@ -48,6 +48,7 @@ namespace LibCardApp.Controllers
             if (User.IsInRole(RoleName.CanManagePatrons))
                 return View("List");
             else
+                //Do we want to make a Read Only version of the list that is the same minus the edit and delete functions?
                 return View("ReadOnlyList");
         }
 

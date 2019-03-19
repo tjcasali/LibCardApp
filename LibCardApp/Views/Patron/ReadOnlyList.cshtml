@@ -1,16 +1,115 @@
-﻿@model IEnumerable<LibCardApp.Models.Patron>
+﻿@using LibCardApp.Models
+@model IEnumerable<LibCardApp.Models.Patron>
 @{
     ViewBag.Title = "Patrons";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Patrons</h2>
-
 <link href="~/StyleSheet.css" rel="stylesheet" />
 
-<body id="homepage">
-<div class="homepageContainer" id="homepageDiv">
-    <img src="/Images/HomePageImg.png" alt="LPLHomeImage" style="width:100%;">
-    <div class="centered">Please Log In to View the Patron List</div>
-</div>
-</body>
+<br />
+<p>@Html.ActionLink("Enter New Patron From Scratch", "New", "Patron", null, new { @class = "btn btn-primary" })</p>
+
+<input class="btn btn-primary" type="button" value="Enter New Patron With Barcode" id="btnSearch"
+       onclick="location.href='@Url.Action("BarcodeEntry", "Patron")?passedBarcode=' + document.getElementById('txtSearch').value; return false;" />
+<input class="text-primary" type="text" id="txtSearch" name="txtSearch" size="25" />
+
+<br />
+<br />
+
+<table id="patrons" class="table table-bordered table-striped table-hover" style="width: 100%">
+    <thead>
+        <tr>
+            <th>Date Submitted</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>PType</th>
+            <th>Barcode</th>
+            <th>View PDF</th>
+            <th>Email PDF</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            var table = $("#patrons").DataTable({
+                ajax: {
+                    url: "/api/patrons",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "dateSubmitted",
+                    },
+                    {
+                        data: "name",
+                    },
+                    {
+                        data: "address"
+                    },
+                    {
+                        data: "city"
+                    },
+                    {
+                        data: "state"
+                    },
+                    {
+                        data: "zip"
+                    },
+                    {
+                        data: "email"
+                    },
+                    {
+                        data: "phone"
+                    },
+                    {
+                        data: "pType"
+                    },
+                    {
+                        data: "barcode"
+                    },
+                    {
+                        data: "id",
+                        render: function (data, type, patron) {
+                            return "<a href='/patron/pdfgenerator/" + patron.id + "'" + data + ">PDF</a>";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data, type, patron) {
+                            return "<a href='/patron/pdfgeneratoremail/" + patron.id + "'" + data + ">Email</a>";
+                        }
+                    }
+                ]
+            });
+
+            $("#patrons").on("click",
+                ".js-delete",
+                function () {
+                    var button = $(this);
+                    bootbox.confirm("Are you sure you want to delete this patron?",
+                        function (result) {
+                            if (result) {
+                                $.ajax({
+                                    url: "/api/patrons/" + button.attr("data-patron-id"),
+                                    method: "DELETE",
+                                    success: function () {
+                                        table.row(button.parents("tr")).remove().draw();
+                                    }
+                                });
+                            }
+                        });
+                });
+        });
+
+    </script>
+}
