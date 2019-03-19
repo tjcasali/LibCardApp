@@ -48,7 +48,6 @@ namespace LibCardApp.Controllers
             if (User.IsInRole(RoleName.CanManagePatrons))
                 return View("List");
             else
-                //Do we want to make a Read Only version of the list that is the same minus the edit and delete functions?
                 return View("ReadOnlyList");
         }
 
@@ -708,8 +707,16 @@ namespace LibCardApp.Controllers
 
             document.Save(fileSavePath + filename);
 
-            if (patron.Email != "No Email Provided")
-                SendEmail(patron.Id);
+            try
+            {
+                if (patron.Email != "No Email Provided")
+                    SendEmail(patron.Id);
+            }
+            catch
+            {
+                return View("EmailFailed");
+            }
+
 
             //return File(fileSavePath + filename, filename);
             return View("EmailConfirmation");
@@ -734,15 +741,18 @@ namespace LibCardApp.Controllers
         {
             var patron = _context.Patrons.SingleOrDefault(c => c.Id == id);
 
+ 
             //Send emails from the Gmail account I created
             var fromAddress = new MailAddress("LPLLibraryCards@gmail.com", "Longwood Library");
             //Takes the email that was passed from PDFGeneratorEmail 
             var toAddress = new MailAddress(patron.Email, "New Patron");
             const string fromPassword = "L1bCardData!";
             const string subject = "Welcome to the Longwood Public Library";
-            const string body = "Welcome to the Longwood Public Library! Please see the attached file to view your receipt for your Library Card.";
+            const string body =
+                "Welcome to the Longwood Public Library! Please see the attached file to view your receipt for your Library Card.";
 
-            string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
+            string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) +
+                              patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
             //string fileSavePath = Server.MapPath("~/PDFs/");
             string fileSavePath = Server.MapPath("~/");
             Attachment attachment = new Attachment(fileSavePath + filename);
@@ -762,12 +772,11 @@ namespace LibCardApp.Controllers
             {
                 Subject = subject,
                 Body = body,
-                Attachments = { attachment }
+                Attachments = {attachment}
             })
             {
                 smtp.Send(message);
             }
-
         }
         #endregion
 
@@ -776,7 +785,10 @@ namespace LibCardApp.Controllers
         /// This function returns the Email Export View when clicked on either from the Nav Bar
         public ViewResult EmailExportIndex()
         {
-             return View("EmailIndex");
+            if (User.IsInRole(RoleName.CanManagePatrons))
+                return View("EmailIndex");
+            else
+                return View("NoAccess");
         }
 
 

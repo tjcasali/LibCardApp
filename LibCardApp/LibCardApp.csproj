@@ -599,6 +599,8 @@
     <Content Include="Views\Patron\ReturnToLibrarian.cshtml" />
     <Content Include="Views\Patron\BarcodeNew.cshtml" />
     <Content Include="Views\Patron\EmailConfirmation.cshtml" />
+    <Content Include="Views\Patron\NoAccess.cshtml" />
+    <Content Include="Views\Patron\EmailFailed.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
