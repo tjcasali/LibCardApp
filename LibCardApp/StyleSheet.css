@@ -1,4 +1,11 @@
-﻿
+﻿.header {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-family: "Century Gothic",sans-serif;
+    font-size: 24px;
+    text-align:center;
+}
+
 #homepageDiv{
     text-align: center;
     font-family: "Century Gothic",sans-serif; color: white;
@@ -52,6 +59,15 @@
     transform: translate(-50%, -50%);
     white-space: nowrap;
     overflow: hidden;
+}
+
+.centered-smalltext {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+    font-size: 20px;
 }
 
 #buttonOnImage {
@@ -162,3 +178,8 @@ color: #d7e2e9;
 .navbar .navbar-link:hover {
     color: #e5dbdb;
 }
+
+
+
+
+
