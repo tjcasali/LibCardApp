@@ -41,6 +41,7 @@ namespace LibCardApp.Controllers
         }
         #endregion
 
+        #region Index
         /// Index()
         /// If logged in it will return a list that can be edited, if not, it will be Read Only
         public ViewResult Index()
@@ -50,7 +51,9 @@ namespace LibCardApp.Controllers
             else
                 return View("ReadOnlyList");
         }
+        #endregion
 
+        #region New Save and Edit
         /// New()
         /// Creates a new View Model for patron information to be loaded into
         public ActionResult New()
@@ -104,6 +107,7 @@ namespace LibCardApp.Controllers
 
             _context.SaveChanges();
 
+            //The patron has the ipad at this point, so we want to give them a prompt to return the device so they don't see any information
             return View("ReturnToLibrarian");
         }
 
@@ -145,9 +149,9 @@ namespace LibCardApp.Controllers
 
             _context.SaveChanges();
 
+            //This function is called on an Edit click. We just want to return to the Patron List after we save.
             return View("List");
         }
-
 
         /// Edit(int id)
         /// This function calls the patron from the _context using the id and pulls the patron
@@ -166,8 +170,9 @@ namespace LibCardApp.Controllers
 
             return View("Edit", viewModel);
         }
+        #endregion
 
-
+        #region Barcode Entry
         /// BarcodeEntry(string passedBarcode)
         /// Reads the barcode that was passed in the textbox and adds it to the URL for the Sierra API.
         /// It then auto populates the respective fields in the New and Edit Views
@@ -182,7 +187,7 @@ namespace LibCardApp.Controllers
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
-            //NetworkCredential networkCredential = new NetworkCredential("TimC", "20Csd08!", "lpl.local");
+            //NetworkCredential networkCredential = new NetworkCredential("TimC", "********", "lpl.local");
             //request.Credentials = networkCredential;
             request.Credentials = System.Net.CredentialCache.DefaultCredentials;
             response = request.GetResponse();
@@ -261,7 +266,8 @@ namespace LibCardApp.Controllers
                     }
                     catch
                     {
-                        //We end up here if the Sierra API was entered incorrectly (No $ or ,). The Clerk will have to enter the address data themselves.
+                        //We end up here if the Sierra API was entered incorrectly (No $ or ,).
+                        //The Clerk will have to fix the error in Sierra
                         patron.Address = "Address entered incorrectly";
                         patron.City = "Address entered incorrectly";
                         patron.State = "Address entered incorrectly";
@@ -311,6 +317,7 @@ namespace LibCardApp.Controllers
 
             }
 
+            //Phone and Email are nullable so we have to fill the field
             if (patron.Email == null)
                 patron.Email = "No Email Provided";
 
@@ -325,6 +332,7 @@ namespace LibCardApp.Controllers
 
             return View("BarcodeNew", viewModel);
         }
+        #endregion
 
         #region PDF
         /// PdfGenerator
@@ -353,9 +361,6 @@ namespace LibCardApp.Controllers
             XGraphics gfx = XGraphics.FromPdfPage(page);
             XTextFormatter tf = new XTextFormatter(gfx);
 
-
-            //Maybe put in a Try Catch so it works locally and published
-
             //Get the EZFontResolver.
             EZFontResolver fontResolver = EZFontResolver.Get;
             // Assign it to PDFsharp.
@@ -369,18 +374,14 @@ namespace LibCardApp.Controllers
                 fontResolver.AddFont("Wingdings", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDING.TTF"), true, true);
                 fontResolver.AddFont("Wingdings 2", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDNG2.TTF"), true, true);
             }
-            catch
-            {
-
-            }
+            catch {/*If the fonts don't need to be added we don't have to do anything*/}
 
             XFont font8Arial = new XFont("Arial", 8);
             XFont font12ArialBold = new XFont("Arial Bold", 12, XFontStyle.Bold);
             XFont font12Garamond = new XFont("Garamond", 12);
             XFont wingdings = new XFont("Wingdings", 12);
             XFont wingdings2 = new XFont("Wingdings 2", 12);
-
-
+   
             XPen blackPen = new XPen(XColors.Black, 1.5);
             XPen blackPenThin = new XPen(XColors.Black, 0.5);
             XPen grayPenThin = new XPen(XColors.LightGray, 0.3);
@@ -447,6 +448,7 @@ namespace LibCardApp.Controllers
 
             switch (patron.PType)
             {
+                //If Patron is an adult or staff member
                 case "p73":
                 case "p75":
                 case "p222":
@@ -454,21 +456,21 @@ namespace LibCardApp.Controllers
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
                     break;
-
+                //If Patron is a teenager
                 case "p62":
                 case "p65":
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("R", wingdings2, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
                     break;
-
+                //If Patron is a child
                 case "p74":
                 case "p76":
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("R", wingdings2, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
                     break;
-
+                //Invalid pType will just checkboxes blank
                 default:
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
@@ -536,7 +538,6 @@ namespace LibCardApp.Controllers
             };
 
             #region PDF Document Declarations
-
             string todaysDate = DateTime.Now.ToShortDateString();
             string stringZip = patron.Zip.ToString();
 
@@ -545,9 +546,6 @@ namespace LibCardApp.Controllers
             PdfPage page = document.AddPage();
             XGraphics gfx = XGraphics.FromPdfPage(page);
             XTextFormatter tf = new XTextFormatter(gfx);
-
-
-            //Maybe put in a Try Catch so it works locally and published
 
             //Get the EZFontResolver.
             EZFontResolver fontResolver = EZFontResolver.Get;
@@ -562,10 +560,7 @@ namespace LibCardApp.Controllers
                 fontResolver.AddFont("Wingdings", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDING.TTF"), true, true);
                 fontResolver.AddFont("Wingdings 2", XFontStyle.Regular, Server.MapPath("~/fonts/WINGDNG2.TTF"), true, true);
             }
-            catch
-            {
-
-            }
+            catch {/*If the fonts don't need to be added we don't have to do anything*/}
 
             XFont font8Arial = new XFont("Arial", 8);
             XFont font12ArialBold = new XFont("Arial Bold", 12, XFontStyle.Bold);
@@ -640,6 +635,7 @@ namespace LibCardApp.Controllers
 
             switch (patron.PType)
             {
+                //If Patron is an adult or staff member
                 case "p73":
                 case "p75":
                 case "p222":
@@ -647,19 +643,21 @@ namespace LibCardApp.Controllers
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
                     break;
-
+                //If Patron is a teenager
                 case "p62":
                 case "p65":
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("R", wingdings2, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
                     break;
+                //If Patron is a child
                 case "p74":
                 case "p76":
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("R", wingdings2, XBrushes.Black, new XRect((page.Width / 2 + 2), 290, page.Width, page.Height), XStringFormats.TopLeft);
                     break;
+                //Invalid pType will just checkboxes blank
                 default:
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 270, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString("o", wingdings, XBrushes.Black, new XRect((page.Width / 2 + 2), 280, page.Width, page.Height), XStringFormats.TopLeft);
@@ -697,7 +695,6 @@ namespace LibCardApp.Controllers
             tf.DrawString(patron.Barcode, font8Arial, XBrushes.Black,
                 new XRect((page.Width / 2 + 2), 435, page.Width, page.Height), XStringFormats.TopLeft);
             gfx.DrawLine(grayPenThin, 50, 445, page.Width / 2, 445);
-
             #endregion
 
             //Naming Convention: The Patrons Last Name, then the last 4 digits of their Barcode. Ex: Casali2034.pdf
@@ -717,8 +714,6 @@ namespace LibCardApp.Controllers
                 return View("EmailFailed");
             }
 
-
-            //return File(fileSavePath + filename, filename);
             return View("EmailConfirmation");
         }
 
@@ -767,7 +762,6 @@ namespace LibCardApp.Controllers
                 Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
             };
 
-
             using (var message = new MailMessage(fromAddress, toAddress)
             {
                 Subject = subject,
@@ -780,7 +774,7 @@ namespace LibCardApp.Controllers
         }
         #endregion
 
-        #region EmailExport
+        #region Email Export
         /// EmailExportIndex()
         /// This function returns the Email Export View when clicked on either from the Nav Bar
         public ViewResult EmailExportIndex()

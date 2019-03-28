@@ -331,6 +331,18 @@
     <Compile Include="Migrations\201902222324395_AddedPTypeToNewDatabase.Designer.cs">
       <DependentUpon>201902222324395_AddedPTypeToNewDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903261855129_SwapToOldDatabase.cs" />
+    <Compile Include="Migrations\201903261855129_SwapToOldDatabase.Designer.cs">
+      <DependentUpon>201903261855129_SwapToOldDatabase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903261956538_AddPatronTableBack.cs" />
+    <Compile Include="Migrations\201903261956538_AddPatronTableBack.Designer.cs">
+      <DependentUpon>201903261956538_AddPatronTableBack.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903262012257_Test.cs" />
+    <Compile Include="Migrations\201903262012257_Test.Designer.cs">
+      <DependentUpon>201903262012257_Test.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -699,6 +711,15 @@
     <EmbeddedResource Include="Migrations\201902222324395_AddedPTypeToNewDatabase.resx">
       <DependentUpon>201902222324395_AddedPTypeToNewDatabase.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903261855129_SwapToOldDatabase.resx">
+      <DependentUpon>201903261855129_SwapToOldDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903261956538_AddPatronTableBack.resx">
+      <DependentUpon>201903261956538_AddPatronTableBack.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903262012257_Test.resx">
+      <DependentUpon>201903262012257_Test.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -718,7 +739,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>52862</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:52863/</IISUrl>
+          <IISUrl>http://localhost:52864/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
