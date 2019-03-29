@@ -156,12 +156,12 @@ namespace LibCardApp.Controllers
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
-                {      
+                {
                     //Temp Code
                     //var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
                     //var roleManager = new RoleManager<IdentityRole>(roleStore);
-                    //await roleManager.CreateAsync(new IdentityRole("CanManagePatrons"));
-                    //await UserManager.AddToRoleAsync(user.Id, "CanManagePatrons");
+                    //await roleManager.CreateAsync(new IdentityRole("IPad"));
+                    //await UserManager.AddToRoleAsync(user.Id, "IPad");
 
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     

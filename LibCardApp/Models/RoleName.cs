@@ -8,5 +8,6 @@ namespace LibCardApp.Models
     public static class RoleName
     {
         public const string CanManagePatrons = "CanManagePatrons";
+        public const string IPad = "IPad";
     }
 }

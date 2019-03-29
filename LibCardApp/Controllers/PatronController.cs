@@ -21,6 +21,7 @@ using PdfSharp.Drawing.Layout;
 using System.Text;
 using log4net.Plugin;
 using System.Net.Mail;
+using System.Web.Security;
 using PdfSharp.Charting;
 
 namespace LibCardApp.Controllers
@@ -46,10 +47,15 @@ namespace LibCardApp.Controllers
         /// If logged in it will return a list that can be edited, if not, it will be Read Only
         public ViewResult Index()
         {
+            
+            if (User.IsInRole(RoleName.IPad))
+                return View("IPadList");
+
             if (User.IsInRole(RoleName.CanManagePatrons))
                 return View("List");
             else
                 return View("ReadOnlyList");
+
         }
         #endregion
 
@@ -513,8 +519,8 @@ namespace LibCardApp.Controllers
 
             //Naming Convention: The Patrons Last Name, then the last 4 digits of their Barcode. Ex: Casali2034.pdf
             string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
-            //string fileSavePath = Server.MapPath("~/PDFs/");
-            string fileSavePath = Server.MapPath("~/");
+            string fileSavePath = Server.MapPath("~/PDFs/");
+            //string fileSavePath = Server.MapPath("~/");
 
             document.Save(fileSavePath + filename);
 
@@ -699,8 +705,8 @@ namespace LibCardApp.Controllers
 
             //Naming Convention: The Patrons Last Name, then the last 4 digits of their Barcode. Ex: Casali2034.pdf
             string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) + patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
-            //string fileSavePath = Server.MapPath("~/PDFs/");
-            string fileSavePath = Server.MapPath("~/");
+            string fileSavePath = Server.MapPath("~/PDFs/");
+            //string fileSavePath = Server.MapPath("~/");
 
             document.Save(fileSavePath + filename);
 

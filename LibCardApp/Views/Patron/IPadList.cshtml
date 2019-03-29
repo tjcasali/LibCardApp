@@ -1,0 +1,21 @@
+﻿@using LibCardApp.Models
+@model IEnumerable<LibCardApp.Models.Patron>
+@{
+    ViewBag.Title = "Patrons";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/StyleSheet.css" rel="stylesheet" />
+
+<link href="~/StyleSheet.css" rel="stylesheet" />
+
+<body id="homepage">
+    <div class="homepageContainer" id="homepageDiv">
+        <img src="/Images/HomePageImg.png" alt="LPLHomeImage" style="width:100%;">
+        <div class="centered">Barcode Entry</div>
+        <div class="littlespace"></div>
+        <input class="btn btn-primary" type="button" value="Enter New Patron With Barcode" id="btnSearch"
+               onclick="location.href='@Url.Action("BarcodeEntry", "Patron")?passedBarcode=' + document.getElementById('txtSearch').value; return false;" />
+        <input class="text-primary" type="text" id="txtSearch" name="txtSearch" size="15" />
+    </div>
+</body>

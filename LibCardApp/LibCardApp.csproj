@@ -343,6 +343,10 @@
     <Compile Include="Migrations\201903262012257_Test.Designer.cs">
       <DependentUpon>201903262012257_Test.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903292230286_SeedUsers2.cs" />
+    <Compile Include="Migrations\201903292230286_SeedUsers2.Designer.cs">
+      <DependentUpon>201903292230286_SeedUsers2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -613,6 +617,7 @@
     <Content Include="Views\Patron\EmailConfirmation.cshtml" />
     <Content Include="Views\Patron\NoAccess.cshtml" />
     <Content Include="Views\Patron\EmailFailed.cshtml" />
+    <Content Include="Views\Patron\IPadList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -719,6 +724,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903262012257_Test.resx">
       <DependentUpon>201903262012257_Test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903292230286_SeedUsers2.resx">
+      <DependentUpon>201903292230286_SeedUsers2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
