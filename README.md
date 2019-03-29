@@ -1,14 +1,11 @@
 # LibCardApp
 
+Longwood Public Library: Library Card Database
+
+This website pulls patron data from the Sierra API using the patron's barcode.
+
+
 **TODO**
-
-Barcode Entry:
-
-	- See how to connect to the server remotely
-
-User Accounts:
-
-	Figure out what we want the circ email and password to be, then implement using section 8.92 in the Udemy
 
 
 **MAYBE**
