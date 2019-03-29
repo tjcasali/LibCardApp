@@ -11,7 +11,7 @@
 {
     <div>
         <div class="editor-label">@Html.LabelFor(m => m.Patron.DateSubmitted):</div>
-        <div class="editor-field">@Html.TextBoxFor(m => m.Patron.DateSubmitted, new { @class = "form-control", @Value = @DateTime.Now.ToShortDateString() })</div>
+        <div class="editor-field">@Html.TextBoxFor(m => m.Patron.DateSubmitted, new { @class = "form-control" })</div>
         @Html.ValidationMessageFor(m => m.Patron.DateSubmitted)
     </div>
     <div>
