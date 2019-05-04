@@ -3,12 +3,10 @@
     ViewBag.Title = "Register";
 }
 
-<h2>@ViewBag.Title.</h2>
-
-We are not allowing new accounts to be created at this time.
+<h1>We are not allowing new accounts to be created at this time.</h1>
 
 
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@*@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
     <h4>Save a new account.</h4>
@@ -41,4 +39,4 @@ We are not allowing new accounts to be created at this time.
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-}
+}*@

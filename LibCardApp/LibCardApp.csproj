@@ -491,6 +491,8 @@
     <Content Include="fonts\ARIALI.TTF" />
     <Content Include="fonts\WINGDING.TTF" />
     <Content Include="fonts\WINGDNG2.TTF" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\LPLLibraryCard - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\LPLLibraryCards - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\LPLLibraryCards - Web Deploy1.pubxml" />

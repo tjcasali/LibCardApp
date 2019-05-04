@@ -340,7 +340,7 @@ namespace LibCardApp.Controllers
         }
         #endregion
 
-        #region PDF
+        #region PDF and Email
         /// PdfGenerator
         ///Use: Takes the id from the List View and pull the respective Patron information and print it onto the pdf template
         ///After it's done it returns the pdf that it's created so it's available to print.
@@ -749,13 +749,26 @@ namespace LibCardApp.Controllers
             var toAddress = new MailAddress(patron.Email, "New Patron");
             const string fromPassword = "L1bCardData!";
             const string subject = "Welcome to the Longwood Public Library";
+
             const string body =
-                "Welcome to the Longwood Public Library! Please see the attached file to view your receipt for your Library Card.";
+                "<h1>Welcome to the Longwood Public Library!</h1> <br/> Please take a moment to complete the setup of your online " +
+                "<a href=\"https://discover.livebrary.com/iii/cas/login?service=https%3A%2F%2Fdiscover.livebrary.com%3A443%2Fiii%2Fencore%2Fj_acegi_cas_security_check&lang=eng&suite=cobalt\">Library Account</a>. " +
+                "Manage your circulation activity, including reserving, renewing your checkouts and setting up text alerts for library holds, overdues, and courtesy notices.<br/><br/>" +
+                "Once you have your Library Account set up, visit <a href=\"https://longwoodlibrary.org\">longwoodlibrary.org</a> to<br/><br/>" +
+                "· Download eBooks, audiobooks, and magazines<br/>" +
+                "· Stream videos and music<br/>" +
+                "· Use research and genealogy databases<br/>" +
+                "· Access customizable legal forms and create a small business plan<br/>" +
+                "· Take online courses and get help from online tutors<br/>" +
+                "· Register for library programs and more!<br/><br/>" +
+                "If you need help setting up your account or have any questions about using the library please contact a librarian by <a href=\"https://chat.mosio.com/par/chat/new_chat/longwood\">chat</a>," +
+                " <a href=\"https://www.longwoodlibrary.org/email-us\" >email</a> or call 631-924-6400 x250.";
 
             string filename = patron.Name.Substring(0, patron.Name.IndexOf(",")) +
                               patron.Barcode.Substring(patron.Barcode.Length - 4) + ".pdf";
-            //string fileSavePath = Server.MapPath("~/PDFs/");
-            string fileSavePath = Server.MapPath("~/");
+            string fileSavePath = Server.MapPath("~/PDFs/");
+            //string fileSavePath = Server.MapPath("~/");
+
             Attachment attachment = new Attachment(fileSavePath + filename);
 
             var smtp = new SmtpClient
@@ -775,12 +788,11 @@ namespace LibCardApp.Controllers
                 Attachments = {attachment}
             })
             {
+                message.IsBodyHtml = true;
                 smtp.Send(message);
             }
         }
-        #endregion
 
-        #region Email Export
         /// EmailExportIndex()
         /// This function returns the Email Export View when clicked on either from the Nav Bar
         public ViewResult EmailExportIndex()
